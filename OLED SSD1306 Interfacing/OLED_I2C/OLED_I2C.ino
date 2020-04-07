@@ -3,7 +3,7 @@
 //~ DEFINES ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // Some defines for the SSD1306 controller driving a 128x64 resolution OLED display
 // PART             - http://www.simplelabs.co.in/content/96-blue-i2c-oled-module
-// DATASHEET      - https://www.adafruit.com/datasheets/SSD1306.pdf
+// DATASHEET        - https://www.adafruit.com/datasheets/SSD1306.pdf
 
 // The Slave Address (SLA) of the OLED controller - SSD1306 - is 0x3C 
 // The LSB is supposed to be the mode. Since we are only going to WRITE to the OLED, the LSB is going to be 0
@@ -12,12 +12,13 @@
 
 // The SSD1306 datasheet (pg.20) says that a control byte has to be sent before sending a command
 // Control byte consists of 
-// bit 7          : Co   : Continuation bit - If 0, then it assumes all the next bytes are data (no more control bytes).
-//                      :            You can send a stream of data, ie: gRAM dump - if Co=0
-//                      :        For Command, you'd prolly wanna set this - one at a time. Hence, Co=1 for commands
-//                      :            For Data stream, Co=0 :)
+// bit 7          : Co   : Continuation bit - If 0, then it assumes all the next bytes are of the same type - either data or command (no more control bytes).
+//                       : You can send a stream of data, ie: gRAM dump
+//                       : Or, you can send a stream of Commands. However,generally we send commands one at a time i.e. control byte, command byte, control byte and so on.
 // bit 6          : D/C# : Data/Command Selection bit, Data=1/Command=0
-// bit [5-0]      : lower 6 bits have to be 0
+//                       : Specifies whether the next bytes are command or data.
+// bit [5-0]             : lower 6 bits have to be 0
+
 #define OLED_CONTROL_BYTE_CMD_SINGLE      0x80
 #define OLED_CONTROL_BYTE_CMD_STREAM      0x00
 #define OLED_CONTROL_BYTE_DATA_STREAM     0x40
@@ -76,7 +77,8 @@ void setup()   {
 
 void loop() {
       // I2C
-      Wire.beginTransmission(OLED_I2C_ADDRESS);
+      Wire.beginTransmission(OLED_I2C_ADDRESS); //For the record, the parameter in Wire.beginTransmission specifies 7 bits (b7-b1). The last bit (b0) is made 0 by default. 
+                                                //For more info regarding that, you might search "7-bit addressing in I2C communications"
       Wire.write(OLED_CONTROL_BYTE_CMD_STREAM);
       Wire.write(OLED_CMD_SET_COLUMN_RANGE);
       Wire.write(0x00);
