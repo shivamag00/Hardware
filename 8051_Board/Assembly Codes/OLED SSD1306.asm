@@ -3,8 +3,6 @@ ORG 00H
 	SCL EQU P2.2
 	MOV P3, #0FFH ;Turn Off LED 
 	
-	
-
 	;CODE
 	;ACALL I2C_INIT
 	ACALL I2C_start
@@ -201,7 +199,7 @@ ORG 00H
 					INC DPTR
 					DJNZ B,BT2
 				DJNZ R4,BT1
-	CONTINUE:
+			CONTINUE:
 			CLR A
 			MOV B,#5
 			BT3:MOVC A,@A+DPTR
