@@ -4,12 +4,11 @@ ORG 00H
 	MOV P3, #0FFH ;Turn Off LED 
 	
 	;CODE
-	LCALL I2C_INIT
-	LCALL I2C_start
+	;ACALL I2C_INIT
+	ACALL I2C_start
 	MOV DPTR, #OLEDINITSEQ
 	MOV R1, #33
 	REPSEQ: 
-		CLR A
 		MOVC A, @A+DPTR
 		ACALL I2C_SEND
 		ACALL DELAY
@@ -18,6 +17,8 @@ ORG 00H
 		INC DPTR
 		DJNZ R1, REPSEQ
 	LCALL I2C_stop
+	
+	
 	
 	MOV P3, #0FFH
 	;OLED reading DATA
@@ -396,8 +397,8 @@ ORG 00H
 	
 		
 	;Initializing the I2C Bus
-	I2C_INIT:
-		RET
+;	I2C_INIT:
+;		RET
 	
 	;Creating the start condition
 	I2C_start:
@@ -410,12 +411,12 @@ ORG 00H
 		RET
 
 	;Creating the restart condition
-	I2C_REstart:
-		CLR SCL
-		SETB SDA
-		SETB SCL
-		CLR SDA
-		RET
+;	I2C_REstart:
+;		CLR SCL
+;		SETB SDA
+;		SETB SCL
+;		CLR SDA
+;		RET
 
 	;Creating the stop condition
 	I2C_stop:
@@ -460,4 +461,6 @@ ORG 00H
 	;ORG 1000H
 	OLEDINITSEQ: DB 78H, 00H, 0AEH, 0A8H, 3FH, 0D3H, 00H, 40H, 0A1H, 0C8H, 0DAH, 12H, 81H, 7FH, 0A4H, 0A6H, 0D5H, 80H, 8DH, 14H, 0D9H, 0F1H, 0DBH, 40H, 20H, 00H, 0AFH, 21H, 00H, 7FH, 22H, 00H, 07H
 	
+	
+
 	END	
