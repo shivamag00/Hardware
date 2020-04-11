@@ -14,7 +14,7 @@
 ORG 00H
 	SDA EQU P2.1
 	SCL EQU P2.2
-	MOV P3, #0FFH ;Turn Off LED 
+	SETB P1.1 ;Turn Off LED 
 	
 ;CODE BEGINS
 	ACALL I2C_start
@@ -24,7 +24,7 @@ ORG 00H
 		CLR A
 		LCALL REP_SEQ
 	LCALL I2C_stop
-		MOV P3, #0FFH
+		SETB P1.1
 	
 	;send the sequence to enable OLED to read DATA to be displayed
 	LCALL I2C_start
@@ -58,9 +58,31 @@ ORG 00H
 		MOV A,#'S'
 		LCALL OLED_DIS_CHAR
 		
+		MOV A,#'R'
+		LCALL OLED_DIS_CHAR
+		MOV A,#'O'
+		LCALL OLED_DIS_CHAR
+		MOV A,#'C'
+		LCALL OLED_DIS_CHAR
+		MOV A,#'K'
+		LCALL OLED_DIS_CHAR
+		MOV A,#'S'
+		LCALL OLED_DIS_CHAR
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
 
 	LCALL I2C_stop
-		MOV P3,#0FFH 	;LED OFF
+		SETB P1.1 	;LED OFF
 		WAIT: SJMP WAIT	;CODE ENDS
 
 	;Creating the start condition
@@ -98,7 +120,7 @@ ORG 00H
 			JC WAIT1
 		CLR A
 		RLC A
-		MOV P3,A
+		CLR P1.1
 		CLR SCL
 		RET
 
@@ -138,7 +160,7 @@ ORG 00H
 		MOVC A, @A+DPTR
 		ACALL I2C_send
 		ACALL DELAY
-		MOV P3, #0FFH
+		SETB P1.1
 		ACALL DELAY
 		INC DPTR
 		DJNZ R1, REP_SEQ
