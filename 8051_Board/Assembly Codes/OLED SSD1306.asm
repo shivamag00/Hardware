@@ -37,49 +37,21 @@ ORG 00H
 		
 		LCALL CLEAR_SCREEN
 		
-		MOV A,#'8'
-		LCALL OLED_DIS_CHAR
-		MOV A,#'0'
-		LCALL OLED_DIS_CHAR
-		MOV A,#'5'
-		LCALL OLED_DIS_CHAR
-		MOV A,#'1'
-		LCALL OLED_DIS_CHAR
-		MOV A,#' '
-		LCALL OLED_DIS_CHAR
-		MOV A,#'R'
-		LCALL OLED_DIS_CHAR
-		MOV A,#'O'
-		LCALL OLED_DIS_CHAR
-		MOV A,#'C'
-		LCALL OLED_DIS_CHAR
-		MOV A,#'K'
-		LCALL OLED_DIS_CHAR
-		MOV A,#'S'
-		LCALL OLED_DIS_CHAR
+		MOV TMOD,#20H
+		MOV TH1,#0FDH
+		MOV SCON, #50H
+		CLR TI
+		SETB TR1
 		
-		MOV A,#'R'
-		LCALL OLED_DIS_CHAR
-		MOV A,#'O'
-		LCALL OLED_DIS_CHAR
-		MOV A,#'C'
-		LCALL OLED_DIS_CHAR
-		MOV A,#'K'
-		LCALL OLED_DIS_CHAR
-		MOV A,#'S'
-		LCALL OLED_DIS_CHAR
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
+		AGAINS:
+			CLR RI
+			REPEATSS:
+				JNB RI,REPEATSS
+				MOV A,SBUF
+				SETB P1.1
+				LCALL DELAY
+				LCALL OLED_DIS_CHAR
+				SJMP AGAINS
 
 	LCALL I2C_stop
 		SETB P1.1 	;LED OFF
@@ -197,3 +169,16 @@ ORG 00H
    OLEDCHARDISP5: DB 0x18, 0x24, 0x24, 0x18, 0xFC, 0x7C, 0x08, 0x04, 0x04, 0x08, 0x48, 0x54, 0x54, 0x54, 0x20, 0x04, 0x3F, 0x44, 0x40, 0x20, 0x3C, 0x40, 0x40, 0x20, 0x7C, 0x1C, 0x20, 0x40, 0x20, 0x1C, 0x3C, 0x40, 0x30, 0x40, 0x3C, 0x44, 0x28, 0x10, 0x28, 0x44, 0x1C, 0xA0, 0xA0, 0xA0, 0x7C, 0x44, 0x64, 0x54, 0x4C, 0x44, 0x00, 0x10, 0x7C, 0x82, 0x00, 0x00, 0x00, 0xFF, 0x00, 0x00, 0x00, 0x82, 0x7C, 0x10, 0x00, 0x00, 0x06, 0x09, 0x09, 0x06
 	
 END	
+
+
+
+
+
+
+
+
+
+
+;---------------------------------------------------------------------------------------------
+
+	
