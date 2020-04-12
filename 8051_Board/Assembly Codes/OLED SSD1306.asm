@@ -48,10 +48,14 @@ ORG 00H
 			REPEATSS:
 				JNB RI,REPEATSS
 				MOV A,SBUF
+				;CJNE A,#'+',CHECKNEXT
 				SETB P1.1
 				LCALL DELAY
 				LCALL OLED_DIS_CHAR
 				SJMP AGAINS
+				
+				;CHECKNEXT:
+					
 
 	LCALL I2C_stop
 		SETB P1.1 	;LED OFF
@@ -91,40 +95,39 @@ ORG 00H
 			MOV C, SDA
 			JC WAIT1
 		CLR A
-		RLC A
 		CLR P1.1
 		CLR SCL
 		RET
 
 	;Delay of approx 2 seconds
 	DELAY:
-		MOV R2,#200
-		AGAIN: MOV R3,#250
+		MOV R6,#200
+		AGAIN: MOV R5,#250
 		HERE: NOP
 			NOP
-			DJNZ R3,HERE
-			DJNZ R2,AGAIN
+			DJNZ R5,HERE
+			DJNZ R6,AGAIN
 			RET
 	
 	OLED_DIS_CHAR:
 			CLR C
 			SUBB A,#32
-			MOV R4,A
+			MOV R6,A
 			MOV DPTR, #OLEDCHARDISP
 			JZ CONTINUE
 			BT1:
-				MOV B,#5
+				MOV R5,#5
 				BT2:
 					INC DPTR
-					DJNZ B,BT2
-				DJNZ R4,BT1
+					DJNZ R5,BT2
+				DJNZ R6,BT1
 			CONTINUE:
 			CLR A
-			MOV B,#5
+			MOV R5,#5
 			BT3:MOVC A,@A+DPTR
 			ACALL I2C_send
 			INC DPTR
-			DJNZ B,BT3
+			DJNZ R5,BT3
 		RET
 	
 	
