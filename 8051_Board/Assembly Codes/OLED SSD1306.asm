@@ -50,16 +50,24 @@ ORG 00H
 				JNB RI,REPEATSS
 				MOV A,SBUF
 				CJNE A,#'+',CHECKNEXT
+				CJNE R7,#00H,CONTINUES
+				MOV R7,#128
+				SUBT:
+					MOV A,#00H
+							LCALL I2C_send
+							DJNZ R7, SUBT
+							SJMP AGAINS
+				CONTINUES:
 				MOV A,#128
 				CLR C
 				SUBB A,R7
 				MOV R7,A
-				JZ CONT
-				SUBBTRACT:
+				JZ CONT	
+				SUBBTRACT:		
 							MOV A,#00H
 							LCALL I2C_send
 							DJNZ R7, SUBBTRACT
-							MOV R7,#0H
+							MOV R7,#00H
 							
 							;CLS
 							MOV R0,#2FH
@@ -84,9 +92,8 @@ ORG 00H
 								
 								DJNZ R1,COMPARE
 								LCALL CLEAR_SCREEN
-								AJMP AGAINS
-							
 				CONT:
+				MOV R0,#30H
 				SJMP AGAINS
 				
 				CHECKNEXT:
@@ -224,3 +231,5 @@ ORG 00H
 	
 END	
 ;---------------------------------------------------------------------------------------------
+
+	
