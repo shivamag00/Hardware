@@ -10,7 +10,9 @@
 ;				      :@Functions called - I2C_send, DELAY
 ; 	CLEAR_SCREEN	- @Resources Used - R5,R4 :@Param - A (Byte to send) :@Functions called - I2C_send
 ;	OLED COMMAND SEQUENCES - 
-
+;   R2 -Current Line Pointer
+;	R7 -Current Character Counter * 6
+;   R0 -Current Command Pointer
 ORG 00H
 	SDA EQU P2.1
 	SCL EQU P2.2
@@ -34,7 +36,8 @@ ORG 00H
 		LCALL REP_SEQ
 	
 	;sending DATA to be displayed	
-		
+		MOV R7,#0
+		MOV R2,#0 ;Line Counter
 		LCALL CLEAR_SCREEN
 		
 		MOV TMOD,#20H
@@ -42,7 +45,7 @@ ORG 00H
 		MOV SCON, #50H
 		CLR TI
 		SETB TR1
-		MOV R7,#0
+		;MOV R7,#0
 		MOV R0,#30H
 		AGAINS:
 			CLR RI
@@ -50,6 +53,7 @@ ORG 00H
 				JNB RI,REPEATSS
 				MOV A,SBUF
 				CJNE A,#'+',CHECKNEXT
+				INC R2
 				CJNE R7,#00H,CONTINUES
 				MOV R7,#128
 				SUBT:
@@ -193,9 +197,21 @@ ORG 00H
 		
 	CLEAR_SCREEN:
 		CLR C
+			MOV A,#128
+			SUBB A,R7
+			MOV R7,A	
+			SUBBTRCT:		
+						MOV A,#00H
+						LCALL I2C_send
+						DJNZ R7, SUBBTRCT
+						MOV R7,#00H
+			INC R2
+			MOV A,#16
+			CLR C
+			SUBB A,R2
+			MOV R4,A
 			MOV DPTR, #OLEDCHARDISP
 			CLR A
-			MOV R4,#8
 			MARK1: 
 				MOV R5,#128
 				MARK2:	
@@ -204,6 +220,8 @@ ORG 00H
 				ACALL I2C_send
 			DJNZ R5,MARK2
 			DJNZ R4,MARK1
+			MOV R7,#00H
+			MOV R2,#00H
 		RET
 		
 		
